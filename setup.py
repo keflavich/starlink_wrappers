@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import sys
+import glob 
+import os
 if 'build_sphinx' in sys.argv or 'develop' in sys.argv:
     from setuptools import setup, Command
 else:
@@ -21,13 +23,12 @@ class PyTest(Command):
     def finalize_options(self):
         pass
     def run(self):
-        import sys,subprocess
+        import subprocess
         errno = subprocess.call([sys.executable, 'runtests.py'])
         raise SystemExit(errno)
 
 execfile('starlink_wrappers/version.py')
 
-import glob 
 scripts = [fname for fname in glob.glob(os.path.join('scripts', '*'))
             if os.path.basename(fname) != 'README.rst']
 
