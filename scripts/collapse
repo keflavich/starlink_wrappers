@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+# example: 
+# collapse Brick_H2CS.sdf Brick_H2CS_max.sdf vrad -20000 65000 estimator="max"
+
+import sys
+import subprocess
+import os
+
+
+infile,outfile = sys.argv[1],sys.argv[2]
+
+#print infile,outfile,
+#sdffile = os.path.splitext(infile)[0]+".sdf"
+#print sdffile
+#sys.exit(0)
+
+if infile[-4:] == 'fits' or infile[-3:] == 'fit':
+    #sdffile = os.path.splitext(infile)[0]+".sdf"
+    sdffile = 'temp.sdf'
+    cmd = """. /star/etc/profile && convert && fits2ndf "{0}" "{1}" """.format(infile,sdffile)
+    print cmd
+    subprocess.call(cmd,shell=True)
+else:
+    sdffile = infile
+
+if outfile[-4:] == 'fits' or outfile[-3:] == 'fit':
+    sdfoutfile = os.path.split(infile)[0]+".sdf"
+    sdfoutfile = 'temp_out.sdf'
+else:
+    sdfoutfile = outfile
+
+cmd = """. /star/etc/profile && kappa && collapse "{0}" "{1}" {2}""".format(sdffile, sdfoutfile, " ".join(sys.argv[3:]))
+subprocess.call(cmd, shell=True)
+
+if sdffile != infile:
+    subprocess.call(". /star/etc/profile && convert && ndf2fits %s %s" % (sdfoutfile,outfile),shell=True)
+    os.remove(sdffile)
+    os.remove(sdfoutfile)
