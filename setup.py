@@ -27,7 +27,12 @@ class PyTest(Command):
 
 execfile('starlink_wrappers/version.py')
 
+import glob 
+scripts = [fname for fname in glob.glob(os.path.join('scripts', '*'))
+            if os.path.basename(fname) != 'README.rst']
+
 setup(name='starlink_wrappers',
+      scripts=scripts,
       version=__version__,
       description='Wrappers for STARLINK tools to work "directly" on FITS files',
       long_description=long_description,
